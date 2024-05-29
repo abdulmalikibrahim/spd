@@ -17,5 +17,8 @@
 <?php
 if(!empty($js_add)){
 	$this->load->view("content/js/".$js_add);
-  }
+}
+if(!empty($this->session->flashdata("swal"))){
+	echo $this->session->flashdata("swal");
+}
 ?>
