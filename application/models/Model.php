@@ -103,19 +103,23 @@ class model extends CI_Model
 	{
 		$this->db->where($where);
 		$this->db->delete($table);
+		return true;
 	}
 	function update($table, $where, $data)
 	{
 		$this->db->where($where);
 		$this->db->update($table, $data);
+		return true;
 	}
 	function update_batch($table, $where, $data)
 	{
 		$this->db->update_batch($table, $data, $where); //where is just set 1 column
+		return true;
 	}
 	public function insert($table, $data)
 	{
 		$this->db->insert($table, $data);
+		return true;
 	}
 	public function truncate($table)
 	{
