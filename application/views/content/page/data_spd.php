@@ -100,8 +100,8 @@
 		?>
 		<div class="row">
 			<div class="col-lg-4 col-6">
-				<div class="card">
-					<div class="card-header bg-warning text-dark p-1 text-center">SUB-ASSY</div>
+				<div class="card border-dark">
+					<div class="card-header border-dark bg-warning text-dark p-1 text-center">SUB-ASSY</div>
 					<div class="card-body text-center font-weight-bold p-0">
 						<div style="font-size:13pt; cursor:pointer;" class="m-2" onclick="searching(this)" data-type="DATA#SPD-SUB-ASSY">
 							<?= $count_sub_assy; ?>
@@ -116,16 +116,18 @@
 										}else{
 											$name_supplier = "TMI";
 										}
-										echo '<td style="font-size:10pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-SUB-ASSY '.$key.'" class="p-0 pt-1 pb-1 bg-secondary text-light">'.$name_supplier.'</td>';
+										echo '<td style="font-size:10pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-SUB-ASSY '.$key.'" class="p-0 pt-1 pb-1 bg-secondary text-light rounded">'.$name_supplier.'</td>';
 									}
 								}
 								?>
 							</tr>
 							<tr>
 								<?php
+								$total_vendor = [];
 								if(!empty($count_by_vendor_sa)){
 									foreach ($count_by_vendor_sa as $key => $value) {
-										echo '<td style="font-size:10pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-SUB-ASSY '.$key.'" class="p-0 pt-1 pb-1">'.array_sum($value).'</td>';
+										$total_vendor[$key] = array_sum($value);
+										echo '<td style="font-size:10pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-SUB-ASSY '.$key.'" class="p-0 pt-1 pb-1 rounded">'.array_sum($value).'</td>';
 									}
 								}
 								?>
@@ -141,7 +143,7 @@
 													<?php
 													if(!empty($count_by_vendor_sa_model[$key_vendor])){
 														foreach ($count_by_vendor_sa_model[$key_vendor] as $model => $value) {
-															echo '<td style="font-size:8pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-SUB-ASSY '.$key_vendor.' '.$model.'" class="p-0 pt-1 pb-1 bg-secondary text-light">'.$model.'</td>';
+															echo '<td style="font-size:8pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-SUB-ASSY '.$key_vendor.' '.$model.'" class="p-0 pt-1 pb-1 bg-secondary text-light rounded">'.$model.'</td>';
 														}
 													}
 													?>
@@ -150,13 +152,22 @@
 													<?php
 													if(!empty($count_by_vendor_sa_model[$key_vendor])){
 														foreach ($count_by_vendor_sa_model[$key_vendor] as $model => $value) {
-															echo '<td style="font-size:8pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-SUB-ASSY '.$key_vendor.' '.$model.'" class="p-0 pt-1 pb-1">'.array_sum($value).'</td>';
+															echo '<td style="font-size:8pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-SUB-ASSY '.$key_vendor.' '.$model.'" class="p-0 pt-1 pb-1 rounded">'.array_sum($value).'</td>';
 														}
 													}
 													?>
 												</tr>
 												<tr>
 													<?php
+													$average_normal = [];
+													foreach ($count_by_vendor_sa_model_jalur[$key_vendor] as $k_avg => $v_avg) {
+														foreach ($v_avg as $k_avg1 => $v_avg1) {
+															$sum_avg = array_sum($v_avg1);
+															$average_normal[$key_vendor][] = $sum_avg;
+														}
+													}
+													$average_normal_count = count($average_normal[$key_vendor]);
+													$avg_normal = round(array_sum($average_normal[$key_vendor]) / $average_normal_count,0);
 													foreach ($count_by_vendor_sa_model[$key_vendor] as $model => $value) {
 														asort($count_by_vendor_sa_model_jalur[$key_vendor][$model]);
 														?>
@@ -172,15 +183,21 @@
 																		}else if($jalur == "WELDING (SIDE MEMBER)"){
 																			$nama_jalur = "S/M";
 																		}
-																		echo '<td style="font-size:6.5pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-SUB-ASSY '.$key_vendor.' '.$model.' '.$jalur.'" class="p-0 pt-1 pb-1 bg-secondary text-light">'.$nama_jalur.'</td>';
+																		echo '<td style="font-size:6.5pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-SUB-ASSY '.$key_vendor.' '.$model.' '.$jalur.'" class="p-0 pt-1 pb-1 bg-secondary text-light rounded">'.$nama_jalur.'</td>';
 																	}
 																	?>
 																</tr>
 																<tr>
 																	<?php
 																	foreach ($count_by_vendor_sa_model_jalur[$key_vendor][$model] as $jalur => $value) {
+																		$total_per_shop = array_sum($value);
+																		if($total_per_shop > $avg_normal){
+																			$color = "bg-danger text-light";
+																		}else{
+																			$color = "";
+																		}
 																		$nama_jalur = str_replace("WELDING (","",str_replace(")","",$jalur));
-																		echo '<td style="font-size:6.5pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-SUB-ASSY '.$key_vendor.' '.$model.' '.$jalur.'" class="p-0 pt-1 pb-1">'.array_sum($value).'</td>';
+																		echo '<td style="font-size:6.5pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-SUB-ASSY '.$key_vendor.' '.$model.' '.$jalur.'" class="p-0 pt-1 pb-1 '.$color.' rounded">'.$total_per_shop.'</td>';
 																	}
 																	?>
 																</tr>
@@ -201,204 +218,229 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-lg mb-2">
-				<div class="card">
-					<div class="card-header bg-success text-light p-1 text-center">CUTTING</div>
-					<div class="card-body text-center font-weight-bold p-0">
-						<div style="font-size:13pt; cursor:pointer;" class="m-2" onclick="searching(this)" data-type="DATA#SPD-CUTTING">
-							<?= $count_cutting; ?>
-						</div>
-						<table class="table table-bordered m-0">
-							<tr>
-								<?php
-								if(!empty($count_by_vendor_cut)){
-									foreach ($count_by_vendor_cut as $key => $value) {
-										if($key == "ADYAWINSA STAMPING INDUSTRIES"){
-											$name_supplier = "ASI";
-										}else{
-											$name_supplier = "TMI";
-										}
-										echo '<td style="font-size:10pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-CUTTING '.$key.'" class="p-0 pt-1 pb-1 bg-secondary text-light">'.$name_supplier.'</td>';
-									}
-								}
-								?>
-							</tr>
-							<tr>
-								<?php
-								if(!empty($count_by_vendor_cut)){
-									foreach ($count_by_vendor_cut as $key => $value) {
-										echo '<td style="font-size:10pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-CUTTING '.$key.'" class="p-0 pt-1 pb-1">'.array_sum($value).'</td>';
-									}
-								}
-								?>
-							</tr>
-							<tr>
-								<?php
-								if(!empty($count_by_vendor_cut)){
-									foreach ($count_by_vendor_cut as $key_vendor => $value_vnedor) {
-										?>
-										<td class="p-0">
-											<table class="table table-bordered m-0">
-												<tr>
-													<?php
-													if(!empty($count_by_vendor_cut_model[$key_vendor])){
-														foreach ($count_by_vendor_cut_model[$key_vendor] as $model => $value) {
-															echo '<td style="font-size:8pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-CUTTING '.$key_vendor.' '.$model.'" class="p-0 pt-1 pb-1 bg-secondary text-light">'.$model.'</td>';
-														}
-													}
-													?>
-												</tr>
-												<tr>
-													<?php
-													if(!empty($count_by_vendor_cut_model[$key_vendor])){
-														foreach ($count_by_vendor_cut_model[$key_vendor] as $model => $value) {
-															echo '<td style="font-size:8pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-CUTTING '.$key_vendor.' '.$model.'" class="p-0 pt-1 pb-1">'.array_sum($value).'</td>';
-														}
-													}
-													?>
-												</tr>
-											</table>
-										</td>
+			<div class="col-lg-8">
+				<div class="row">
+					<div class="col-lg mb-2">
+						<div class="card border-dark">
+							<div class="card-header border-dark bg-success text-light p-1 text-center">CUTTING</div>
+							<div class="card-body text-center font-weight-bold p-0">
+								<div style="font-size:13pt; cursor:pointer;" class="m-2" onclick="searching(this)" data-type="DATA#SPD-CUTTING">
+									<?= $count_cutting; ?>
+								</div>
+								<table class="table table-bordered m-0">
+									<tr>
 										<?php
-									}
-								}
-								?>
-							</tr>
-						</table>
+										if(!empty($count_by_vendor_cut)){
+											foreach ($count_by_vendor_cut as $key => $value) {
+												if($key == "ADYAWINSA STAMPING INDUSTRIES"){
+													$name_supplier = "ASI";
+												}else{
+													$name_supplier = "TMI";
+												}
+												echo '<td style="font-size:10pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-CUTTING '.$key.'" class="p-0 pt-1 pb-1 bg-secondary text-light">'.$name_supplier.'</td>';
+											}
+										}
+										?>
+									</tr>
+									<tr>
+										<?php
+										if(!empty($count_by_vendor_cut)){
+											foreach ($count_by_vendor_cut as $key => $value) {
+												echo '<td style="font-size:10pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-CUTTING '.$key.'" class="p-0 pt-1 pb-1">'.array_sum($value).'</td>';
+											}
+										}
+										?>
+									</tr>
+									<tr>
+										<?php
+										if(!empty($count_by_vendor_cut)){
+											foreach ($count_by_vendor_cut as $key_vendor => $value_vnedor) {
+												?>
+												<td class="p-0">
+													<table class="table table-bordered m-0">
+														<tr>
+															<?php
+															if(!empty($count_by_vendor_cut_model[$key_vendor])){
+																foreach ($count_by_vendor_cut_model[$key_vendor] as $model => $value) {
+																	echo '<td style="font-size:8pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-CUTTING '.$key_vendor.' '.$model.'" class="p-0 pt-1 pb-1 bg-secondary text-light">'.$model.'</td>';
+																}
+															}
+															?>
+														</tr>
+														<tr>
+															<?php
+															if(!empty($count_by_vendor_cut_model[$key_vendor])){
+																foreach ($count_by_vendor_cut_model[$key_vendor] as $model => $value) {
+																	echo '<td style="font-size:8pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-CUTTING '.$key_vendor.' '.$model.'" class="p-0 pt-1 pb-1">'.array_sum($value).'</td>';
+																}
+															}
+															?>
+														</tr>
+													</table>
+												</td>
+												<?php
+											}
+										}
+										?>
+									</tr>
+								</table>
+							</div>
+						</div>
 					</div>
-				</div>
-			</div>
-			<div class="col-lg mb-2">
-				<div class="card">
-					<div class="card-header bg-info text-light p-1 text-center">SINGLE PART</div>
-					<div class="card-body text-center font-weight-bold p-0">
-						<div style="font-size:13pt; cursor:pointer;" class="m-2" onclick="searching(this)" data-type="DATA#SPD-SINGLE PART">
-							<?= $count_single_part; ?>
-						</div>
-						<table class="table table-bordered m-0">
-							<tr>
-								<?php
-								if(!empty($count_by_vendor_sp)){
-									foreach ($count_by_vendor_sp as $key => $value) {
-										if($key == "ADYAWINSA STAMPING INDUSTRIES"){
-											$name_supplier = "ASI";
-										}else{
-											$name_supplier = "TMI";
-										}
-										echo '<td style="font-size:10pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-SINGLE PART '.$key.'" class="p-0 pt-1 pb-1 bg-secondary text-light">'.$name_supplier.'</td>';
-									}
-								}
-								?>
-							</tr>
-							<tr>
-								<?php
-								if(!empty($count_by_vendor_sp)){
-									foreach ($count_by_vendor_sp as $key => $value) {
-										echo '<td style="font-size:10pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-SINGLE PART '.$key.'" class="p-0 pt-1 pb-1">'.array_sum($value).'</td>';
-									}
-								}
-								?>
-							</tr>
-							<tr>
-								<?php
-								if(!empty($count_by_vendor_sp)){
-									foreach ($count_by_vendor_sp as $key_vendor => $value_vnedor) {
-										?>
-										<td class="p-0">
-											<table class="table table-bordered m-0">
-												<tr>
-													<?php
-													if(!empty($count_by_vendor_sp_model[$key_vendor])){
-														foreach ($count_by_vendor_sp_model[$key_vendor] as $model => $value) {
-															echo '<td style="font-size:8pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-SINGLE PART '.$key_vendor.' '.$model.'" class="p-0 pt-1 pb-1 bg-secondary text-light">'.$model.'</td>';
-														}
-													}
-													?>
-												</tr>
-												<tr>
-													<?php
-													if(!empty($count_by_vendor_sp_model[$key_vendor])){
-														foreach ($count_by_vendor_sp_model[$key_vendor] as $model => $value) {
-															echo '<td style="font-size:8pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-SINGLE PART '.$key_vendor.' '.$model.'" class="p-0 pt-1 pb-1">'.array_sum($value).'</td>';
-														}
-													}
-													?>
-												</tr>
-											</table>
-										</td>
+					<div class="col-lg mb-2">
+						<div class="card border-dark">
+							<div class="card-header border-dark bg-info text-light p-1 text-center">SINGLE PART</div>
+							<div class="card-body text-center font-weight-bold p-0">
+								<div style="font-size:13pt; cursor:pointer;" class="m-2" onclick="searching(this)" data-type="DATA#SPD-SINGLE PART">
+									<?= $count_single_part; ?>
+								</div>
+								<table class="table table-bordered m-0">
+									<tr>
 										<?php
-									}
-								}
-								?>
-							</tr>
-						</table>
+										if(!empty($count_by_vendor_sp)){
+											foreach ($count_by_vendor_sp as $key => $value) {
+												if($key == "ADYAWINSA STAMPING INDUSTRIES"){
+													$name_supplier = "ASI";
+												}else{
+													$name_supplier = "TMI";
+												}
+												echo '<td style="font-size:10pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-SINGLE PART '.$key.'" class="p-0 pt-1 pb-1 bg-secondary text-light">'.$name_supplier.'</td>';
+											}
+										}
+										?>
+									</tr>
+									<tr>
+										<?php
+										if(!empty($count_by_vendor_sp)){
+											foreach ($count_by_vendor_sp as $key => $value) {
+												echo '<td style="font-size:10pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-SINGLE PART '.$key.'" class="p-0 pt-1 pb-1">'.array_sum($value).'</td>';
+											}
+										}
+										?>
+									</tr>
+									<tr>
+										<?php
+										if(!empty($count_by_vendor_sp)){
+											foreach ($count_by_vendor_sp as $key_vendor => $value_vnedor) {
+												?>
+												<td class="p-0">
+													<table class="table table-bordered m-0">
+														<tr>
+															<?php
+															if(!empty($count_by_vendor_sp_model[$key_vendor])){
+																foreach ($count_by_vendor_sp_model[$key_vendor] as $model => $value) {
+																	echo '<td style="font-size:8pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-SINGLE PART '.$key_vendor.' '.$model.'" class="p-0 pt-1 pb-1 bg-secondary text-light">'.$model.'</td>';
+																}
+															}
+															?>
+														</tr>
+														<tr>
+															<?php
+															if(!empty($count_by_vendor_sp_model[$key_vendor])){
+																foreach ($count_by_vendor_sp_model[$key_vendor] as $model => $value) {
+																	echo '<td style="font-size:8pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-SINGLE PART '.$key_vendor.' '.$model.'" class="p-0 pt-1 pb-1">'.array_sum($value).'</td>';
+																}
+															}
+															?>
+														</tr>
+													</table>
+												</td>
+												<?php
+											}
+										}
+										?>
+									</tr>
+								</table>
+							</div>
+						</div>
 					</div>
-				</div>
-			</div>
-			<div class="col-lg mb-2">
-				<div class="card">
-					<div class="card-header bg-danger text-light p-1 text-center">N/A</div>
-					<div class="card-body text-center font-weight-bold p-0">
-						<div style="font-size:13pt; cursor:pointer;" class="m-2" onclick="searching(this)" data-type="DATA#SPD-N/A">
-							<?= $count_na; ?>
-						</div>
-						<table class="table table-bordered m-0">
-							<tr>
-								<?php
-								if(!empty($count_by_vendor_na)){
-									foreach ($count_by_vendor_na as $key => $value) {
-										if($key == "ADYAWINSA STAMPING INDUSTRIES"){
-											$name_supplier = "ASI";
-										}else{
-											$name_supplier = "TMI";
-										}
-										echo '<td style="font-size:10pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-N/A '.$key.'" class="p-0 pt-1 pb-1 bg-secondary text-light">'.$name_supplier.'</td>';
-									}
-								}
-								?>
-							</tr>
-							<tr>
-								<?php
-								if(!empty($count_by_vendor_na)){
-									foreach ($count_by_vendor_na as $key => $value) {
-										echo '<td style="font-size:10pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-N/A '.$key.'" class="p-0 pt-1 pb-1">'.array_sum($value).'</td>';
-									}
-								}
-								?>
-							</tr>
-							<tr>
-								<?php
-								if(!empty($count_by_vendor_na)){
-									foreach ($count_by_vendor_na as $key_vendor => $value_vnedor) {
-										?>
-										<td class="p-0">
-											<table class="table table-bordered m-0">
-												<tr>
-													<?php
-													if(!empty($count_by_vendor_na_model[$key_vendor])){
-														foreach ($count_by_vendor_na_model[$key_vendor] as $model => $value) {
-															echo '<td style="font-size:8pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-N/A '.$key_vendor.' '.$model.'" class="p-0 pt-1 pb-1 bg-secondary text-light">'.$model.'</td>';
-														}
-													}
-													?>
-												</tr>
-												<tr>
-													<?php
-													if(!empty($count_by_vendor_na_model[$key_vendor])){
-														foreach ($count_by_vendor_na_model[$key_vendor] as $model => $value) {
-															echo '<td style="font-size:8pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-N/A '.$key_vendor.' '.$model.'" class="p-0 pt-1 pb-1">'.array_sum($value).'</td>';
-														}
-													}
-													?>
-												</tr>
-											</table>
-										</td>
+					<div class="col-lg mb-2">
+						<div class="card border-dark">
+							<div class="card-header border-dark bg-danger text-light p-1 text-center">N/A</div>
+							<div class="card-body text-center font-weight-bold p-0">
+								<div style="font-size:13pt; cursor:pointer;" class="m-2" onclick="searching(this)" data-type="DATA#SPD-N/A">
+									<?= $count_na; ?>
+								</div>
+								<table class="table table-bordered m-0">
+									<tr>
 										<?php
-									}
-								}
-								?>
-							</tr>
-						</table>
+										if(!empty($count_by_vendor_na)){
+											foreach ($count_by_vendor_na as $key => $value) {
+												if($key == "ADYAWINSA STAMPING INDUSTRIES"){
+													$name_supplier = "ASI";
+												}else{
+													$name_supplier = "TMI";
+												}
+												echo '<td style="font-size:10pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-N/A '.$key.'" class="p-0 pt-1 pb-1 bg-secondary text-light">'.$name_supplier.'</td>';
+											}
+										}
+										?>
+									</tr>
+									<tr>
+										<?php
+										if(!empty($count_by_vendor_na)){
+											foreach ($count_by_vendor_na as $key => $value) {
+												echo '<td style="font-size:10pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-N/A '.$key.'" class="p-0 pt-1 pb-1">'.array_sum($value).'</td>';
+											}
+										}
+										?>
+									</tr>
+									<tr>
+										<?php
+										if(!empty($count_by_vendor_na)){
+											foreach ($count_by_vendor_na as $key_vendor => $value_vnedor) {
+												?>
+												<td class="p-0">
+													<table class="table table-bordered m-0">
+														<tr>
+															<?php
+															if(!empty($count_by_vendor_na_model[$key_vendor])){
+																foreach ($count_by_vendor_na_model[$key_vendor] as $model => $value) {
+																	echo '<td style="font-size:8pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-N/A '.$key_vendor.' '.$model.'" class="p-0 pt-1 pb-1 bg-secondary text-light">'.$model.'</td>';
+																}
+															}
+															?>
+														</tr>
+														<tr>
+															<?php
+															if(!empty($count_by_vendor_na_model[$key_vendor])){
+																foreach ($count_by_vendor_na_model[$key_vendor] as $model => $value) {
+																	echo '<td style="font-size:8pt; cursor:pointer;" onclick="searching(this)" data-type="DATA#SPD-N/A '.$key_vendor.' '.$model.'" class="p-0 pt-1 pb-1">'.array_sum($value).'</td>';
+																}
+															}
+															?>
+														</tr>
+													</table>
+												</td>
+												<?php
+											}
+										}
+										?>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+					<?php
+					$now_date = date("d");
+					$end_date = date("t");
+					$sisa_hari = $end_date - $now_date;
+					?>
+					<div class="col-lg-6">
+						<div class="card border-dark">
+							<div class="card-body bg-warning text-dark d-flex align-items-center p-0 pl-3 font-weight-bold">
+								<i class="fas fa-cloud-sun pr-2" style="font-size:1.5rem; margin:5px 0 5px 0;"></i>
+								Target Prod Day (SUB-ASSY) : <?= round(($count_sub_assy/$sisa_hari)*(60/100),0); ?>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-6">
+						<div class="card border-dark">
+							<div class="card-body bg-secondary text-light d-flex align-items-center p-0 pl-3 font-weight-bold">
+								<i class="fas fa-cloud-moon pr-2" style="font-size:1.5rem; margin:5px 0 5px 0;"></i>
+								Target Prod Night (SUB-ASSY) : <?= round(($count_sub_assy/$sisa_hari)*(40/100),0); ?>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -408,7 +450,7 @@
 		</div>
 	</div>
       <div class="col-lg-12">
-		<div class="table-responsive">
+		<div class="table-responsive" id="datatable-div">
 			<form action="<?= base_url("create_wos"); ?>" method="post" id="form-wos">
 				<table class="table table-bordered table-hover" id="datatable">
 					<thead class="thead-light">

@@ -9,14 +9,18 @@
 		pageLength:-1
 	});
 
+	$("#datatable-div").hide();
+
 	$("#div-reset-filter").hide();
 	function searching(data) {
 		type = data.dataset.type;
 		table.search(type).draw();
 		if(type){
 			$("#div-reset-filter").show();
+	-		$("#datatable-div").show();
 		}else{
 			$("#div-reset-filter").hide();
+	-		$("#datatable-div").hide();
 		}
 	}
 
