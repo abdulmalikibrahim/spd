@@ -5,6 +5,18 @@ class model extends CI_Model
 	function __construct()
 	{
 		parent::__construct();
+		$this->wos = $this->load->database('wos', TRUE);
+	}
+	public function gd_wos($table, $select, $where, $status)
+	{
+		$this->wos->select($select);
+		$this->wos->where($where);
+		$this->wos->from($table);
+		if ($status == 'result') {
+			return $this->wos->get()->result();
+		} else {
+			return $this->wos->get()->row();
+		}
 	}
 	public function dd($db){
 		$this->load->dbforge();

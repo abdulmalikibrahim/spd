@@ -52,3 +52,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'Main';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
+$route['spd_all'] = 'Service_Part/all';
+$route['spd_remain'] = 'Service_Part/remain';
+$route['spd_close'] = 'Service_Part/close';
+$route['already_process'] = 'Service_Part/already_process';
+$route['create_wos'] = 'Service_Part/create_wos';
+$route['print_wos'] = 'Service_Part/print_wos';
+$route['print_kanban_asi'] = 'Service_Part/print_kanban_asi';
+$route['print_kanban_tmi'] = 'Service_Part/print_kanban_tmi';
+$route['closing_planning'] = 'Service_Part/closing_planning';
+
+$route['scan_process'] = 'Process/scan_process';
+$route['scan_processing'] = 'Process/scan_processing';
+$route['cancel_process'] = 'Process/cancel_process';
+$route['cancel_processing'] = 'Process/cancel_processing';
+$route['scan_out'] = 'Process/scan_out';
+$route['update_scan_out'] = 'Process/update_scan_out';
+$route['print_kanban'] = 'Process/print_kanban';
+$route['failed_scan_out'] = 'Process/failed_scan_out';
+$route['cancel_scan_out'] = 'Process/cancel_scan_out';
+
+$route['planning_spd'] = 'Planning/planning_spd';
